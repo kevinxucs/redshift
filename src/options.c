@@ -301,6 +301,8 @@ options_init(options_t *options)
 	options->scheme.dawn.end = -1;
 	options->scheme.dusk.start = -1;
 	options->scheme.dusk.end = -1;
+	options->scheme.bedtime.start = -1;
+	options->scheme.bedtime.end = -1;
 
 	options->scheme.day.temperature = -1;
 	options->scheme.day.gamma[0] = NAN;
@@ -309,6 +311,10 @@ options_init(options_t *options)
 	options->scheme.night.temperature = -1;
 	options->scheme.night.gamma[0] = NAN;
 	options->scheme.night.brightness = NAN;
+
+	options->scheme.midnight.temperature = -1;
+	options->scheme.midnight.gamma[0] = NAN;
+	options->scheme.midnight.brightness = NAN;
 
 	/* Temperature for manual mode */
 	options->temp_set = -1;
@@ -519,6 +525,10 @@ parse_config_file_option(
 		if (options->scheme.night.temperature < 0) {
 			options->scheme.night.temperature = atoi(value);
 		}
+	} else if (strcasecmp(key, "temp-bedtime") == 0) {
+		if (options->scheme.midnight.temperature < 0) {
+			options->scheme.midnight.temperature = atoi(value);
+		}
 	} else if (strcasecmp(key, "transition") == 0 ||
 		   strcasecmp(key, "fade") == 0) {
 		/* "fade" is preferred, "transition" is
@@ -562,7 +572,7 @@ parse_config_file_option(
 			int r = parse_gamma_string(
 				value, options->scheme.day.gamma);
 			if (r < 0) {
-				fputs(_("Malformed gamma setting.\n"), stderr);
+				fputs(_("Malformed gamma-day setting.\n"), stderr);
 				return -1;
 			}
 		}
@@ -571,7 +581,16 @@ parse_config_file_option(
 			int r = parse_gamma_string(
 				value, options->scheme.night.gamma);
 			if (r < 0) {
-				fputs(_("Malformed gamma setting.\n"), stderr);
+				fputs(_("Malformed gamma-night setting.\n"), stderr);
+				return -1;
+			}
+		}
+	} else if (strcasecmp(key, "gamma-midnight") == 0) {
+		if (isnan(options->scheme.midnight.gamma[0])) {
+			int r = parse_gamma_string(
+				value, options->scheme.midnight.gamma);
+			if (r < 0) {
+				fputs(_("Malformed gamma-midnight setting.\n"), stderr);
 				return -1;
 			}
 		}
@@ -611,6 +630,16 @@ parse_config_file_option(
 				value, &options->scheme.dusk);
 			if (r < 0) {
 				fprintf(stderr, _("Malformed dusk-time"
+						  " setting `%s'.\n"), value);
+				return -1;
+			}
+		}
+	} else if (strcasecmp(key, "bed-time") == 0) {
+		if (options->scheme.bedtime.start < 0) {
+			int r = parse_transition_range(
+				value, &options->scheme.bedtime);
+			if (r < 0) {
+				fprintf(stderr, _("Malformed bed-time"
 						  " setting `%s'.\n"), value);
 				return -1;
 			}

@@ -135,6 +135,7 @@ static const char *period_names[] = {
 	N_("None"),
 	N_("Daytime"),
 	N_("Night"),
+    N_("Bedtime"),
 	N_("Transition")
 };
 

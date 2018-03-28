@@ -38,6 +38,7 @@ typedef enum {
 	PERIOD_NONE = 0,
 	PERIOD_DAYTIME,
 	PERIOD_NIGHT,
+    PERIOD_MIDNIGHT,
 	PERIOD_TRANSITION
 } period_t;
 
@@ -73,8 +74,10 @@ typedef struct {
 	int use_time; /* When enabled, ignore elevation and use time ranges. */
 	time_range_t dawn;
 	time_range_t dusk;
+    time_range_t bedtime;
 	color_setting_t day;
 	color_setting_t night;
+    color_setting_t midnight;
 } transition_scheme_t;
 
 
